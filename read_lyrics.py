@@ -19,7 +19,7 @@ def request_lyrics(track_id):
         lyrics_language = trans.detect(lyrics_clean).lang
         return lyrics_clean, lyrics_language
     except:
-        return 999, None
+        return '999', None
 
 def clean_data(data):
     data['lyrics'] = data['track_id'].map(lambda x: request_lyrics(x)[0])
@@ -50,7 +50,8 @@ def load_data_to_bq(data: pd.DataFrame,
     client = bigquery.Client()
 
     # define write mode and schema
-    #write_mode = "WRITE_TRUNCATE" if truncate else "WRITE_APPEND"
+    write_mode = "WRITE_TRUNCATE" if truncate else "WRITE_APPEND"
+    #job_config = bigquery.LoadJobConfig(write_disposition=write_mode)
     job_config = bigquery.LoadJobConfig(
 
     schema = [
