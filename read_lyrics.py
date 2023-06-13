@@ -91,7 +91,6 @@ def load_data_to_bq(data: pd.DataFrame,
 
 if __name__ == '__main__':
     data = pd.read_csv('raw_data/dataset.csv')
-    data_sub = data.sample(5)
     base_url = 'https://spotify-lyric-api.herokuapp.com/'
-    data = clean_data(data_sub)
+    data = clean_data(data)
     load_data_to_bq(data, truncate=False)
