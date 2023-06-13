@@ -94,5 +94,4 @@ if __name__ == '__main__':
     data_sub = data.sample(5)
     base_url = 'https://spotify-lyric-api.herokuapp.com/'
     data = clean_data(data_sub)
-    breakpoint()
     load_data_to_bq(data, truncate=False)
