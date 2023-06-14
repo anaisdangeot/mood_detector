@@ -6,3 +6,9 @@ googletrans
 streamlit
 WorldCloud
 pillow
+nltk
+langdetect
+gensim
+wordcloud
+sklearn
+tensorflow
