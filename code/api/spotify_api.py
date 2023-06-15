@@ -39,10 +39,11 @@ def search_track(query, token):
     params = {
         "q": query,
         "type": "track",
-        "limit": 1
+        "total": 6
     }
     response = requests.get(url, headers=headers, params=params)
     json_response = json.loads(response.text)
+
     if "tracks" in json_response and "items" in json_response["tracks"]:
         tracks = json_response["tracks"]["items"]
         if len(tracks) > 0:
@@ -56,6 +57,7 @@ def search_track(query, token):
             print("Artiste:", artist_name)
             print("Album:", album_name)
             print("ID:",track_id)
+
         else:
             print("Music not found:", query)
     else:
@@ -64,4 +66,6 @@ def search_track(query, token):
 
 token =get_token()
 search_query = input("What's in your mind?")
+
 search_track(search_query,token)
+print (token)
