@@ -1,0 +1,10 @@
+pandas
+requests
+google-cloud-bigquery
+colorama
+googletrans
+streamlit
+WorldCloud
+pillow
+spotifysearch
+WorldCloud
