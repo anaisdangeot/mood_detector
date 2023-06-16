@@ -19,7 +19,7 @@ def request_lyrics(track_id):
         lyrics_language = trans.detect(lyrics_clean).lang
         return lyrics_clean, lyrics_language
     except:
-        return 999, None
+        return '999', '999'
 
 def clean_data(data):
     data['lyrics'] = data['track_id'].map(lambda x: request_lyrics(x)[0])
@@ -50,7 +50,8 @@ def load_data_to_bq(data: pd.DataFrame,
     client = bigquery.Client()
 
     # define write mode and schema
-    #write_mode = "WRITE_TRUNCATE" if truncate else "WRITE_APPEND"
+    write_mode = "WRITE_TRUNCATE" if truncate else "WRITE_APPEND"
+    #job_config = bigquery.LoadJobConfig(write_disposition=write_mode)
     job_config = bigquery.LoadJobConfig(
 
     schema = [
@@ -74,7 +75,9 @@ def load_data_to_bq(data: pd.DataFrame,
         bigquery.SchemaField(data.columns[17], "FLOAT64"),
         bigquery.SchemaField(data.columns[18], "FLOAT64"),
         bigquery.SchemaField(data.columns[19], "INTEGER"),
-        bigquery.SchemaField(data.columns[20], "STRING")
+        bigquery.SchemaField(data.columns[20], "STRING"),
+        bigquery.SchemaField(data.columns[21], "STRING"),
+        bigquery.SchemaField(data.columns[22], "STRING")
     ],
     autodetect=False,
     source_format=bigquery.SourceFormat.CSV
@@ -88,7 +91,6 @@ def load_data_to_bq(data: pd.DataFrame,
 
 if __name__ == '__main__':
     data = pd.read_csv('raw_data/dataset.csv')
-    data_sub = data.sample(5)
     base_url = 'https://spotify-lyric-api.herokuapp.com/'
-    data = clean_data(data_sub)
+    data = clean_data(data)
     load_data_to_bq(data, truncate=False)
