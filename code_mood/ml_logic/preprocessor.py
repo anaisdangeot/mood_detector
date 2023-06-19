@@ -48,43 +48,43 @@ Whe will also get our lyrics and their language to complement our data:
 '''
 
 ## TEXT FEATURE PREPROCESSING
+#  Cleaning steps
+def cleaning(text):
+    # Basic cleaning
+    text = text.strip() ## remove whitespaces
+    text = text.lower() ## lowercase
+    text = ''.join(char for char in text if not char.isdigit()) ## remove numbers
+
+    # Advanced cleaning
+    for punctuation in string.punctuation:
+        text = text.replace(punctuation, '') ## remove punctuation
+
+    # function to remove accented characters
+    def remove_accented_chars(txt):
+        new_text = unicodedata.normalize('NFKD', txt).encode('ascii', 'ignore').decode('utf-8', 'ignore')
+        return new_text
+    text = remove_accented_chars(text)
+
+    tokenized_sentence = nltk.word_tokenize(text) ## tokenize
+    stop_words = set(stopwords.words('english')) ## define stopwords
+
+    tokenized_sentence_cleaned = [ ## remove stopwords
+        w for w in tokenized_sentence if not w in stop_words
+    ]
+
+    lemmatized = [
+        WordNetLemmatizer().lemmatize(word, pos = "v")
+        for word in tokenized_sentence_cleaned
+    ]
+
+    cleaned_sentence = ' '.join(word for word in lemmatized)
+
+    return cleaned_sentence
 #  Applying cleaning steps and vectorization
 def clean_vectorize(sentence):
-        #  Cleaning steps
-    def cleaning():
-        # Basic cleaning
-        sentence = sentence.strip() ## remove whitespaces
-        sentence = sentence.lower() ## lowercase
-        sentence = ''.join(char for char in sentence if not char.isdigit()) ## remove numbers
-
-        # Advanced cleaning
-        for punctuation in string.punctuation:
-            sentence = sentence.replace(punctuation, '') ## remove punctuation
-
-        # function to remove accented characters
-        def remove_accented_chars(txt):
-            new_text = unicodedata.normalize('NFKD', txt).encode('ascii', 'ignore').decode('utf-8', 'ignore')
-            return new_text
-        sentence = remove_accented_chars(sentence)
-
-        tokenized_sentence = nltk.word_tokenize(sentence) ## tokenize
-        stop_words = set(stopwords.words('english')) ## define stopwords
-
-        tokenized_sentence_cleaned = [ ## remove stopwords
-            w for w in tokenized_sentence if not w in stop_words
-        ]
-
-        lemmatized = [
-            WordNetLemmatizer().lemmatize(word, pos = "v")
-            for word in tokenized_sentence_cleaned
-        ]
-
-        cleaned_sentence = ' '.join(word for word in lemmatized)
-
-        return cleaned_sentence
-    cleaned_text = cleaning()
-    vectorizer = TfidfVectorizer(ngram_range=(1,2), max_df=0.35, max_features=300)
-    text_vectors = vectorizer.fit_transform(cleaned_text(sentence)).toarray()
+    cleaned_text = [cleaning(sentence)]
+    vectorizer = TfidfVectorizer(ngram_range=(1,2), max_features=300)
+    text_vectors = vectorizer.fit_transform(cleaned_text)
 
     print("✅ Text vectors of shape", text_vectors.shape)
 
@@ -96,14 +96,15 @@ def pipeline(X: pd.DataFrame) -> np.ndarray:
 
     num_transformer = Pipeline([('min_max_scaler', MinMaxScaler())
     ])
-
     cat_transformer = OneHotEncoder(handle_unknown='ignore')
 
     # Parallelize "num_transformer" and "cat_transfomer"
-    preprocessor = ColumnTransformer([
-        ('num_transformer', num_transformer, dtype_include=['int64','float64']),
-        ('cat_transformer', cat_transformer, dtype_include=['bool','object'])
-    ])
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('num_transformer', num_transformer, ['int64', 'float64']),
+            ('cat_transformer', cat_transformer, ['bool', 'object'])
+        ]
+    )
 
     X_transformed = preprocessor.fit_transform(X)
     print("✅ Non text array of shape", X_transformed.shape)
@@ -117,5 +118,3 @@ def combined_features(text: np.ndarray,
     print("✅ X_combined_preprocessed, with shape", X_combined.shape)
 
     return X_combined
-
-if
