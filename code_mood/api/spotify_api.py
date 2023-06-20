@@ -3,9 +3,7 @@ import base64
 import requests
 from requests import post
 import json
-import spotifysearch
 from googletrans import Translator
-import pickle
 
 
 ### SPOTIFY METRICS

@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 
 # Sklearn
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
@@ -84,7 +84,7 @@ def cleaning(text):
 #  Applying cleaning steps and vectorization
 def vectorize(sentence):
     cleaned_text = cleaning(sentence)
-    vectorizer = pickle.load(open('/home/anais/code/anaisdangeot/mood_detector/code_mood/ml_logic/model_pipeline/vectorizer.pickle', 'rb'))
+    vectorizer = pickle.load(open('/code_mood/ml_logic/model_pipeline/vectorizer.pickle', 'rb'))
     text_vectors = vectorizer.transform([cleaned_text]).toarray()
 
     print("✅ Text vectors of shape", text_vectors.shape)
@@ -107,7 +107,7 @@ def pipeline(X: pd.DataFrame) -> np.ndarray:
     #     ]
     # )
     # use saved fitted preprocessor pipeline
-    preprocessor = pickle.load(open('/home/anais/code/anaisdangeot/mood_detector/code_mood/ml_logic/model_pipeline/pipeline.pickle', 'rb'))
+    preprocessor = pickle.load(open('/code_mood/ml_logic/model_pipeline/pipeline.pickle', 'rb'))
 
     X_transformed = pd.DataFrame(preprocessor.transform(X),columns=preprocessor.get_feature_names_out().astype(str))
     print("✅ Non text array of shape", X_transformed.shape)

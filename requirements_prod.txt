@@ -1,0 +1,24 @@
+# GENERAL
+pandas==1.4.4
+numpy
+pickleshare==0.7.5
+
+# Sklearn
+scikit-learn
+
+# Language processing
+nltk
+langdetect
+googletrans
+
+# API requests
+requests
+
+# API creation
+fastapi
+uvicorn
+google-cloud-storage
+
+# Data Viz
+matplotlib
+wordcloud

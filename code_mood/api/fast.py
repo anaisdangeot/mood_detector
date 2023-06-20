@@ -1,9 +1,6 @@
 from fastapi import FastAPI
 from code_mood.api.spotify_api import *
 from code_mood.ml_logic.preprocessor import *
-from tensorflow import keras
-from fastapi.templating import Jinja2Templates
-templates = Jinja2Templates(directory="htmlDirectory")
 import pickle
 
 app = FastAPI()
@@ -14,8 +11,7 @@ app = FastAPI()
 # and then store the model in an `app.state.model` global variable, accessible across all routes!
 # This will prove very useful for the Demo Day
 # load model from pickle file
-#app.state.model = keras.models.load_model('/home/anais/code/anaisdangeot/mood_detector/notebooks/modelSVC_bestparams_saved.h5')
-model_path = "/home/anais/code/anaisdangeot/mood_detector/code_mood/ml_logic/model_pipeline/modelSVC_bestparams_saved.h5"
+model_path = "/code_mood/ml_logic/model_pipeline/modelSVC_bestparams_saved.h5"
 app.state.model = pickle.load(open(model_path, 'rb'))
 # $WIPE_END
 
