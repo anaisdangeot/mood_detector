@@ -1,6 +1,7 @@
 # GENERAL
 import pandas as pd
 import numpy as np
+import pickle
 
 # Sklearn
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, TfidfVectorizer
@@ -81,10 +82,10 @@ def cleaning(text):
 
     return cleaned_sentence
 #  Applying cleaning steps and vectorization
-def clean_vectorize(sentence):
-    cleaned_text = [cleaning(sentence)]
-    vectorizer = TfidfVectorizer(ngram_range=(1,2), max_features=300)
-    text_vectors = vectorizer.fit_transform(cleaned_text)
+def vectorize(sentence):
+    cleaned_text = cleaning(sentence)
+    vectorizer = pickle.load(open('/home/anais/code/anaisdangeot/mood_detector/code_mood/ml_logic/model_pipeline/vectorizer.pickle', 'rb'))
+    text_vectors = vectorizer.transform([cleaned_text]).toarray()
 
     print("✅ Text vectors of shape", text_vectors.shape)
 
@@ -94,19 +95,21 @@ def clean_vectorize(sentence):
 # Scale numerical values and one hot encode categorical vars:
 def pipeline(X: pd.DataFrame) -> np.ndarray:
 
-    num_transformer = Pipeline([('min_max_scaler', MinMaxScaler())
-    ])
-    cat_transformer = OneHotEncoder(handle_unknown='ignore')
+    # num_transformer = Pipeline([('min_max_scaler', MinMaxScaler())
+    # ])
+    # cat_transformer = OneHotEncoder(handle_unknown='ignore')
 
-    # Parallelize "num_transformer" and "cat_transfomer"
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ('num_transformer', num_transformer, ['int64', 'float64']),
-            ('cat_transformer', cat_transformer, ['bool', 'object'])
-        ]
-    )
+    # # Parallelize "num_transformer" and "cat_transfomer"
+    # preprocessor = ColumnTransformer(
+    #     transformers=[
+    #         ('num_transformer', num_transformer, ['int64', 'float64']),
+    #         ('cat_transformer', cat_transformer, ['bool', 'object'])
+    #     ]
+    # )
+    # use saved fitted preprocessor pipeline
+    preprocessor = pickle.load(open('/home/anais/code/anaisdangeot/mood_detector/code_mood/ml_logic/model_pipeline/pipeline.pickle', 'rb'))
 
-    X_transformed = preprocessor.fit_transform(X)
+    X_transformed = pd.DataFrame(preprocessor.transform(X),columns=preprocessor.get_feature_names_out().astype(str))
     print("✅ Non text array of shape", X_transformed.shape)
 
     return X_transformed
